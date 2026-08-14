@@ -101,7 +101,7 @@ if [[ $(id -G) != 0 ]]; then
   exit 1
 fi
 
-Domain="user/$(id -u)"
+Domain="user/$(id -u)/"
 
 case "$1" in
   status)

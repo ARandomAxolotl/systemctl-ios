@@ -76,18 +76,45 @@ ChkStatus() {
     esac
 }
 
-ShowHelp() {
-  echo "systemctl COMMAND ..."
-  HelpEcho "status [service]" "Show status of [service]."
-}
+
 
 StartSvc() {
-  log "Starting $2"
-  launchctl kickstart -k "$Domain$2"
+  log "Starting $1"
+  launchctl start "$Domain$1"
   if [[ $? != 0 ]]; then
-    err "Failed to start $2."
+    err "Failed to start $1."
   else
-    success "Started $2."
+    success "Started $1."
+  fi
+}
+
+StopSvc() {
+  log "Stopping $1"
+  launchctl stop "$Domain$1"
+  if [[ $? != 0 ]]; then
+    err "Failed to stop $1."
+  else
+    success "Stopped $1."
+  fi
+}
+
+EnaSvc() {
+  log "Enabling $1"
+  launchctl enable "$Domain$1"
+  if [[ $? != 0 ]]; then
+    err "Failed to enable $1."
+  else
+    success "Enabled $1."
+  fi
+}
+
+DisSvc() {
+  log "Disabling $1"
+  launchctl disable "$Domain$1"
+  if [[ $? != 0 ]]; then
+    err "Failed to disable $1."
+  else
+    success "Disabled $1."
   fi
 }
 
@@ -101,7 +128,25 @@ if [[ $(id -G) != 0 ]]; then
   exit 1
 fi
 
-Domain="user/502/"
+Domain="user/501/"
+
+ShowHelp() {
+  printf '%ssystemctl%s COMMAND ...' "$BOLD" "$RESET"
+  printf '\n'
+  printf '%sService%s comands :' "$UNDERLINE" "$RESET"
+  HelpEcho "status  [service]" "Show status of [service]."
+  HelpEcho "stop    [service]" "Stop [service]."
+  HelpEcho "start   [service]" "Start [service]."
+  HelpEcho "enalbe  [service]" "Enable [service]"
+  HelpEcho "disable [service]" "Disable [service]"
+  HelpEcho "whoami" "Show your domain."
+
+  printf '\n'  
+  printf '%sSystem%s comands :' "$UNDERLINE" "$RESET"
+  HelpEcho "soft-reboot" "Reboot userspace"
+  HelpEcho "reboot" "Reboot the ${BOLD}system${RESET}. ${RED}Your jailbreak will lost.${RESET} You have been warned."
+
+}
 
 case "$1" in
   status)
@@ -113,6 +158,35 @@ case "$1" in
     ;;
   start)
     StartSvc "$2"
+    ;;
+  whoami)
+    echo "$Domain"
+    ;;
+  stop)
+    StopSvc "$2"
+    ;;
+  enable)
+    EnaSvc "$2"
+    ;;
+  disable)
+    DisSvc "$2"
+    ;;
+  reboot)
+    warn "WARNING: A full reboot may cause your jailbreak to be lost."
+    warn "Consider using 'systemctl soft-reboot' instead."
+    printf "Continue with full reboot? [y/N]: "
+
+    read -r answer
+
+    if [[ "$answer" != [yY] ]]; then
+        info "Reboot cancelled."
+        exit 0
+    fi
+
+    launchctl reboot system
+    ;;
+  soft-reboot)
+    launchctl reboot userspace
     ;;
   *)
     err "Idk what command is $UNDERLINE$BOLD$1$RESET${RED}."

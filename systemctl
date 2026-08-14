@@ -131,20 +131,20 @@ fi
 Domain="user/501/"
 
 ShowHelp() {
-  printf '%ssystemctl%s COMMAND ...' "$BOLD" "$RESET"
+  printf '%ssystemctl%s COMMAND ...\n' "$BOLD" "$RESET"
   printf '\n'
-  printf '%sService%s comands :' "$UNDERLINE" "$RESET"
+  printf '%sService%s commands :' "$UNDERLINE" "$RESET"
   HelpEcho "status  [service]" "Show status of [service]."
   HelpEcho "stop    [service]" "Stop [service]."
   HelpEcho "start   [service]" "Start [service]."
-  HelpEcho "enalbe  [service]" "Enable [service]"
+  HelpEcho "enable  [service]" "Enable [service]"
   HelpEcho "disable [service]" "Disable [service]"
   HelpEcho "whoami" "Show your domain."
 
   printf '\n'  
-  printf '%sSystem%s comands :' "$UNDERLINE" "$RESET"
-  HelpEcho "soft-reboot" "Reboot userspace"
-  HelpEcho "reboot" "Reboot the ${BOLD}system${RESET}. ${RED}Your jailbreak will lost.${RESET} You have been warned."
+  printf '%sSystem%s commands :\n' "$UNDERLINE" "$RESET"
+  HelpEcho "soft-reboot" "Reboot userspace."
+  HelpEcho "reboot" "Reboot the ${BOLD}system${RESET}. ${RED}Your jailbreak may be lost.${RESET} You have been warned."
 
 }
 

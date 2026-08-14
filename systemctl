@@ -39,6 +39,14 @@ warn() {
     printf '%s%s%s\n' "$YELLOW" "$*" "$RESET"
 }
 
+echo(){
+  printf '%s\n' "$*"
+}
+
+HelpEcho(){
+  printf '%-20s : %s\n' "$1" "$2"
+}
+
 ChkStatus() {
     local unit="$1"
 
@@ -70,6 +78,7 @@ ChkStatus() {
 
 if [[ $(id -G) != 0 ]]; then
   err "no root :("
+  exit 1
 fi
 
 case "$1" in
@@ -78,8 +87,8 @@ case "$1" in
     ;;
   *)
     err "Idk what command is $1"
-    info "systemctl"
-    info "> status [service]"
+    info "systemctl COMMAND ..."
+    HelpEcho "status [service]" "Show status of [service]."
     exit 1
 esac
 

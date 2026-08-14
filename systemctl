@@ -76,5 +76,10 @@ case "$1" in
   status)
     ChkStatus "$2"
     ;;
+  *)
+    err "Idk what command is $1"
+    info "systemctl"
+    info "> status [service]"
+    exit 1
 esac
 

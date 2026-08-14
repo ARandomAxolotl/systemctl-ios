@@ -27,8 +27,8 @@ err(){
   printf '%s\n' "$RED$*$RESET"
 }
 
-info() {
-    printf '%s%s%s\n' "$CYAN" "$*" "$RESET"
+log(){
+  printf '%s\n' "$CYAN$*$RESET"
 }
 
 success() {
@@ -76,6 +76,11 @@ ChkStatus() {
     esac
 }
 
+ShowHelp() {
+  info "systemctl COMMAND ..."
+  HelpEcho "status [service]" "Show status of [service]."
+}
+
 if [[ $(id -G) != 0 ]]; then
   err "no root :("
   exit 1
@@ -85,10 +90,12 @@ case "$1" in
   status)
     ChkStatus "$2"
     ;;
+  "")
+    ShowHelp
+    exit
   *)
-    err "Idk what command is $1"
-    info "systemctl COMMAND ..."
-    HelpEcho "status [service]" "Show status of [service]."
+    err "Idk what command is $UNDERLINE$BOLD$1$RESET${RED}."
+    ShowHelp
     exit 1
 esac
 

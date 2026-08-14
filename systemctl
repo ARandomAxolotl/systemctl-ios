@@ -86,6 +86,7 @@ StartSvc() {
   launchctl start "$Domain$1"
   if [[ $? != 0 ]]; then
     err "Failed to start $1."
+    exit 1
   else
     success "Started $1."
   fi
@@ -96,6 +97,7 @@ StopSvc() {
   launchctl stop "$Domain$1"
   if [[ $? != 0 ]]; then
     err "Failed to stop $1."
+    exit 1
   else
     success "Stopped $1."
   fi
@@ -106,6 +108,7 @@ EnaSvc() {
   launchctl enable "$Domain$1"
   if [[ $? != 0 ]]; then
     err "Failed to enable $1."
+    exit 1
   else
     success "Enabled $1."
   fi
@@ -116,6 +119,7 @@ DisSvc() {
   launchctl disable "$Domain$1"
   if [[ $? != 0 ]]; then
     err "Failed to disable $1."
+    exit 1
   else
     success "Disabled $1."
   fi
@@ -135,7 +139,7 @@ Domain="user/501/"
 
 ShowHelp() {
   printf '%ssystemctl for iOS%s COMMAND ...\n' "$BOLD" "$RESET"
-  printf '%s\n' "$ITALIC${GRAY}basicly a launchctl wrapper.$RESET"
+  printf '%s\n' "$ITALIC${GRAY}basically a launchctl wrapper.$RESET"
   printf '\n'
   printf '%sService%s commands :\n' "$UNDERLINE" "$RESET"
   HelpEcho "status  [service]" "Show status of [service]."
@@ -143,6 +147,7 @@ ShowHelp() {
   HelpEcho "start   [service]" "Start [service]."
   HelpEcho "enable  [service]" "Enable [service]"
   HelpEcho "disable [service]" "Disable [service]"
+  HelpEcho "restart [service]" "Restart [service]."
   HelpEcho "whoami" "Show your domain."
 
   printf '\n'  
@@ -191,6 +196,13 @@ case "$1" in
     ;;
   soft-reboot)
     launchctl reboot userspace
+    ;;
+  help)
+    ShowHelp
+    ;;
+  restart)
+    StopSvc "$2" || exit $?
+    StartSvc "$2"
     ;;
   *)
     err "Idk what command is $UNDERLINE$BOLD$1$RESET${RED}."

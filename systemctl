@@ -48,7 +48,7 @@ HelpEcho(){
 }
 
 ChkStatus() {
-    local unit="$1"
+    local Unit="$1"
 
     local output
     output=$(launchctl print "$Domain$Unit" 2>&1)

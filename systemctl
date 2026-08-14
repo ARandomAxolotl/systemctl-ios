@@ -51,7 +51,7 @@ ChkStatus() {
     local unit="$1"
 
     local output
-    output=$(launchctl print "user/501/$unit" 2>&1)
+    output=$(launchctl print "$Domain$Unit" 2>&1)
 
     if (( $? != 0 )); then
         err "✗ $unit"
@@ -81,10 +81,27 @@ ShowHelp() {
   HelpEcho "status [service]" "Show status of [service]."
 }
 
+StartSvc() {
+  log "Starting $2"
+  launchctl kickstart -k "$Domain$2"
+  if [[ $? =! 0 ]]; then
+    err "Failed to start $2."
+  else
+    success "Started $2."
+  fi
+}
+
+if [[ $(uname -s) = "Linux" ]]; then
+  err "Bro this is Linux. Use native systemctl or what the hell your distro give you."
+  exit 1
+fi
+
 if [[ $(id -G) != 0 ]]; then
   err "no root :("
   exit 1
 fi
+
+Domain="user/$(id -u)"
 
 case "$1" in
   status)
@@ -93,6 +110,9 @@ case "$1" in
   "")
     ShowHelp
     exit
+    ;;
+  start)
+    StartSvc "$2"
     ;;
   *)
     err "Idk what command is $UNDERLINE$BOLD$1$RESET${RED}."

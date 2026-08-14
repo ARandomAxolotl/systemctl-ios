@@ -93,9 +93,11 @@ case "$1" in
   "")
     ShowHelp
     exit
+    ;;
   *)
     err "Idk what command is $UNDERLINE$BOLD$1$RESET${RED}."
     ShowHelp
     exit 1
+    ;;
 esac
 

@@ -77,7 +77,7 @@ ChkStatus() {
 }
 
 ShowHelp() {
-  info "systemctl COMMAND ..."
+  echo "systemctl COMMAND ..."
   HelpEcho "status [service]" "Show status of [service]."
 }
 

@@ -133,7 +133,7 @@ Domain="user/501/"
 ShowHelp() {
   printf '%ssystemctl%s COMMAND ...\n' "$BOLD" "$RESET"
   printf '\n'
-  printf '%sService%s commands :' "$UNDERLINE" "$RESET"
+  printf '%sService%s commands :\n' "$UNDERLINE" "$RESET"
   HelpEcho "status  [service]" "Show status of [service]."
   HelpEcho "stop    [service]" "Stop [service]."
   HelpEcho "start   [service]" "Start [service]."

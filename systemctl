@@ -20,6 +20,9 @@ BRIGHT_WHITE=$'\033[97m'
 
 BOLD=$'\033[1m'
 UNDERLINE=$'\033[4m'
+ITALIC=$'\033[3m'
+
+GRAY=$'\033[90m'
 
 RESET=$'\033[0m'
 
@@ -131,7 +134,8 @@ fi
 Domain="user/501/"
 
 ShowHelp() {
-  printf '%ssystemctl%s COMMAND ...\n' "$BOLD" "$RESET"
+  printf '%ssystemctl for iOS%s COMMAND ...\n' "$BOLD" "$RESET"
+  printf '%s\n' "$ITALIC${GRAY}basicly a launchctl wrapper.$RESET"
   printf '\n'
   printf '%sService%s commands :\n' "$UNDERLINE" "$RESET"
   HelpEcho "status  [service]" "Show status of [service]."

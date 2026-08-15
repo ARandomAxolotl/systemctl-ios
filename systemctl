@@ -1,5 +1,11 @@
 #!/bin/zsh
 
+zparseopts -D -E \
+    -h=help \
+    --help=help \
+    -l=linux \
+    --linux=linux
+
 BLACK=$'\033[30m'
 RED=$'\033[31m'
 GREEN=$'\033[32m'
@@ -57,7 +63,7 @@ ChkStatus() {
     output=$(launchctl print "$Domain$Unit" 2>&1)
 
     if (( $? != 0 )); then
-        err "✗ $unit"
+        err "✗ $Unit"
         printf '  %s\n' "$output"
         return 1
     fi
@@ -68,18 +74,16 @@ ChkStatus() {
     case "$state" in
         running)
             printf '%s●%s %s%s%s\n' \
-                "$BRIGHT_GREEN" "$RESET" "$BOLD" "$unit" "$RESET"
+                "$BRIGHT_GREEN" "$RESET" "$BOLD" "$Unit" "$RESET"
             printf '  State: %s%s%s\n' "$GREEN" "$state" "$RESET"
             ;;
         *)
             printf '%s●%s %s%s%s\n' \
-                "$BRIGHT_YELLOW" "$RESET" "$BOLD" "$unit" "$RESET"
+                "$BRIGHT_YELLOW" "$RESET" "$BOLD" "$Unit" "$RESET"
             printf '  State: %s%s%s\n' "$YELLOW" "$state" "$RESET"
             ;;
     esac
 }
-
-
 
 StartSvc() {
   log "Starting $1"
@@ -125,17 +129,22 @@ DisSvc() {
   fi
 }
 
-if [[ $(uname -s) = "Linux" ]]; then
+
+
+if [[ $OSTYPE == linux* ]]; then
+  if (( ${+linux} )); then
+    if [[ $(awk 'NR==1 {print $2; exit}' /proc/1/status) == "systemd" ]]; then
+      warn "Redirecting to systemctl.."
+      exec systemctl "$@[2,-1]"
+    else
+      err "--linux was requested, but PID 1 is not systemd."
+      exit 1
+    fi
+  else
   err "Bro this is Linux. Use native systemctl or what the hell your distro give you."
-  exit 1
+    exit 1
+  fi
 fi
-
-if [[ $(id -G) != 0 ]]; then
-  err "no root :("
-  exit 1
-fi
-
-Domain="user/501/"
 
 ShowHelp() {
   printf '%ssystemctl for iOS%s COMMAND ...\n' "$BOLD" "$RESET"
@@ -156,6 +165,20 @@ ShowHelp() {
   HelpEcho "reboot" "Reboot the ${BOLD}system${RESET}. ${RED}Your jailbreak may be lost.${RESET} You have been warned."
 
 }
+
+if (( ${+help} )); then
+  ShowHelp
+  exit 0
+fi
+
+if [[ $(id -G) != 0 ]]; then
+  err "no root :("
+  exit 1
+fi
+
+Domain="user/501/"
+
+
 
 case "$1" in
   status)

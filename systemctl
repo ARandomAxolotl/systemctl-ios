@@ -25,6 +25,10 @@ GRAY=$'\033[90m'
 
 RESET=$'\033[0m'
 
+AkiyamaMizukiIsTuff() {
+  printf '%s\n' "$UNDERLINE${transBLUE}Aki${transPINK}yama${transWHITE} Mizu${transPINK}ki${RESET} is${transBLUE} $UNDERLINE${BOLD}tuff$RESET"
+}
+
 err(){
   printf '%s\n' "$RED$*$RESET"
 }
@@ -122,8 +126,48 @@ DisSvc() {
   fi
 }
 
+LoadSvc(){
+  if [[ -f "/System/Library/LaunchDaemons/${1}.plist" ]]; then
+    Daemon="/System/Library/LaunchDaemons/${1}.plist"
+  elif [[ -f "/rootfs/System/Library/LaunchDaemons/${1}.plist" ]]; then
+    Daemon="/rootfs/System/Library/LaunchDaemons/${1}.plist"
+  else
+    err "Daemon not found!"
+    exit 1
+  fi
+  log "Found deamon at $Daemon"
+  log "Loading $1..."
+  launchctl load "$Daemon"
+  if [[ $? != 0 ]]; then
+    err "Failed to load $1. May be the daemon is loaded."
+    exit 1
+  else
+    success "Loaded $1."
+  fi
+}
+
+UnLoadSvc(){
+  if [[ -f "/System/Library/LaunchDaemons/${1}.plist" ]]; then
+    uDaemon="/System/Library/LaunchDaemons/${1}.plist"
+  elif [[ -f "/rootfs/System/Library/LaunchDaemons/${1}.plist" ]]; then
+    uDaemon="/rootfs/System/Library/LaunchDaemons/${1}.plist"
+  else
+    err "Daemon not found!"
+    exit 1
+  fi
+  log "Found deamon at $uDaemon"
+  log "Unloading $1..."
+  launchctl unload "$uDaemon"
+  if [[ $? != 0 ]]; then
+    err "Failed to unload $1. May be the daemon is not loaded."
+    exit 1
+  else
+    success "Unloaded $1."
+  fi
+}
+
 ShowHelp() {
-  printf '%ssystemctl for iOS%s COMMAND ...\n' "$BOLD" "$RESET"
+  printf '%ssystemctl for iOS%s [command] ...\n' "$BOLD" "$RESET"
   printf '%s\n' "$ITALIC${GRAY}basically a launchctl wrapper.$RESET"
   printf '\n'
   printf '%sService%s commands :\n' "$UNDERLINE" "$RESET"
@@ -133,6 +177,8 @@ ShowHelp() {
   HelpEcho "enable  [service]" "Enable [service]"
   HelpEcho "disable [service]" "Disable [service]"
   HelpEcho "restart [service]" "Restart [service]."
+  HelpEcho "load    [service]" "Load [service]."
+  HelpEcho "unload  [service]" "Unload [service]."
   HelpEcho "whoami" "Show your domain."
 
   printf '\n'  
@@ -172,8 +218,6 @@ if [[ $(id -G) != 0 ]]; then
 fi
 
 Domain="user/501/"
-
-
 
 case "$1" in
   status)
@@ -222,6 +266,12 @@ case "$1" in
     StopSvc "$2" || exit $?
     StartSvc "$2"
     ;;
+  load)
+    LoadSvc "$2"
+    ;;
+  unload)
+    UnLoadSvc "$2"
+    ;;
   *)
     err "Idk what command is $UNDERLINE$BOLD$1$RESET${RED}."
     ShowHelp
@@ -229,3 +279,4 @@ case "$1" in
     ;;
 esac
 
+AkiyamaMizukiIsTuff

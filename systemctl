@@ -135,7 +135,7 @@ LoadSvc(){
     err "Daemon not found!"
     exit 1
   fi
-  log "Found deamon at $Daemon"
+  log "Found daemon at $Daemon"
   log "Loading $1..."
   launchctl load "$Daemon"
   if [[ $? != 0 ]]; then
@@ -155,7 +155,7 @@ UnLoadSvc(){
     err "Daemon not found!"
     exit 1
   fi
-  log "Found deamon at $uDaemon"
+  log "Found daemon at $uDaemon"
   log "Unloading $1..."
   launchctl unload "$uDaemon"
   if [[ $? != 0 ]]; then
